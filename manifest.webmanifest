@@ -1,0 +1,13 @@
+{
+  "name": "Go Outside",
+  "short_name": "Go Outside",
+  "description": "One small outdoor mission, written on your device by Gemma. Then put your phone away.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f0e6",
+  "theme_color": "#1f3d2b",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
