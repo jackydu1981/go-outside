@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Go Outside: one small mission, then put your phone away</title>
+  <meta name="description" content="Tap once. Gemma, running on your own device, writes one short outdoor mission fitted to your weather and time of day. Then the screen goes dark until you're back." />
+  <meta name="theme-color" content="#1f3d2b" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="app">
+
+    <!-- HOME -->
+    <section id="screen-home" class="screen" data-active>
+      <header class="brand"><span class="leaf" aria-hidden="true"></span>Go Outside</header>
+      <h1>One small reason<br /><span class="soft">to step outside.</span></h1>
+      <p class="lede">One tap. A small model on <em>this</em> device writes one mission for the next little while, fitted to your weather and the time of day. Then the screen goes dark until you're back.</p>
+
+      <fieldset class="chips" aria-label="How long do you have?">
+        <legend>How long?</legend>
+        <label><input type="radio" name="minutes" value="20" /><span>20 min</span></label>
+        <label><input type="radio" name="minutes" value="30" checked /><span>30 min</span></label>
+        <label><input type="radio" name="minutes" value="45" /><span>45 min</span></label>
+      </fieldset>
+
+      <fieldset class="chips" aria-label="Where are you heading?">
+        <legend>Where?</legend>
+        <label><input type="radio" name="setting" value="a city street" /><span>Street</span></label>
+        <label><input type="radio" name="setting" value="a park or green space" /><span>Park</span></label>
+        <label><input type="radio" name="setting" value="a backyard, garden or balcony" /><span>Yard</span></label>
+        <label><input type="radio" name="setting" value="anywhere nearby on foot" checked /><span>Anywhere</span></label>
+      </fieldset>
+
+      <label class="toggle">
+        <input type="checkbox" id="use-location" />
+        <span>Use my location for the local weather <small>(rounded to ~10 km, never stored)</small></span>
+      </label>
+
+      <button id="go" class="primary big">Give me a mission</button>
+      <p id="status" class="status" role="status"></p>
+
+      <nav class="footer-links">
+        <button class="link" data-goto="journal">Field journal <span id="journal-count"></span></button>
+        <button class="link" data-goto="about">How it works</button>
+      </nav>
+    </section>
+
+    <!-- FIRST-RUN DOWNLOAD -->
+    <section id="screen-consent" class="screen">
+      <h2>One-time download</h2>
+      <p>Your missions are written by <strong id="consent-model">Gemma</strong>, an open-weight model from Google, running entirely on this device. It needs a one-time download of about <strong id="consent-size">1.5 GB</strong>. After that it works offline, and nothing you do here leaves your phone.</p>
+      <p class="hint">On mobile data? Pick "Lighter model" on the How it works page, or use a hand-written mission for now.</p>
+      <button id="consent-yes" class="primary">Download and continue</button>
+      <button id="consent-no" class="secondary">Use a hand-written mission</button>
+    </section>
+
+    <!-- LOADING -->
+    <section id="screen-loading" class="screen">
+      <p id="loading-title" class="loading-title">Checking the sky…</p>
+      <div class="progress" aria-hidden="true"><div id="progress-bar"></div></div>
+      <p id="loading-detail" class="hint mono"></p>
+    </section>
+
+    <!-- MISSION -->
+    <section id="screen-mission" class="screen">
+      <p class="eyebrow">Your mission</p>
+      <h2 id="mission-title"></h2>
+      <p id="mission-text" class="mission-text"></p>
+      <p id="mission-meta" class="hint"></p>
+      <button id="start" class="primary big">Start. Phone away.</button>
+      <div class="row">
+        <button id="reroll" class="secondary">Another one</button>
+        <button class="secondary" data-goto="home">Back</button>
+      </div>
+    </section>
+
+    <!-- AWAY -->
+    <section id="screen-away" class="screen dark">
+      <p class="away-label">Phone away. Go.</p>
+      <p id="countdown" class="countdown" aria-live="off">30:00</p>
+      <p id="away-mission" class="away-mission"></p>
+      <button id="back-early" class="ghost">I'm back</button>
+    </section>
+
+    <!-- BACK -->
+    <section id="screen-back" class="screen">
+      <p class="eyebrow">Welcome back</p>
+      <h2>What did you see?</h2>
+      <p id="back-mission" class="hint"></p>
+      <form id="note-form">
+        <input id="note" type="text" maxlength="140" placeholder="One line. A red leaf, a loud crow…" autocomplete="off" />
+        <button type="submit" class="primary">Save to journal</button>
+      </form>
+      <button id="skip-note" class="secondary">Skip</button>
+    </section>
+
+    <!-- JOURNAL -->
+    <section id="screen-journal" class="screen">
+      <header class="brand"><span class="leaf" aria-hidden="true"></span>Field journal</header>
+      <p class="hint">Kept only in this browser's local storage.</p>
+      <ol id="journal-list" class="journal"></ol>
+      <p id="journal-empty" class="hint">Nothing yet. That's what outside is for.</p>
+      <div class="row">
+        <button class="secondary" data-goto="home">Back</button>
+        <button id="clear-journal" class="ghost-danger">Clear journal</button>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="screen-about" class="screen">
+      <header class="brand"><span class="leaf" aria-hidden="true"></span>How it works</header>
+      <ul class="about">
+        <li><strong>Gemma writes the mission on your device.</strong> It runs in your browser on your GPU through WebLLM and WebGPU. No AI server, no account, no API key.</li>
+        <li><strong>Weather from Open-Meteo.</strong> If you allow location, your position is rounded to about 10 km before the weather request. It is never saved.</li>
+        <li><strong>Your journal stays here.</strong> Notes live in this browser's local storage and nowhere else.</li>
+        <li><strong>Works offline</strong> after the first load: the app and the model are cached.</li>
+      </ul>
+      <fieldset class="chips" aria-label="Model">
+        <legend>Model</legend>
+        <label><input type="radio" name="model" value="standard" /><span>Gemma 2 2B (~1.5 GB)</span></label>
+        <label><input type="radio" name="model" value="lite" /><span>Lighter: Gemma 3 1B (~0.6 GB)</span></label>
+      </fieldset>
+      <p id="gpu-info" class="hint"></p>
+      <button class="secondary" data-goto="home">Back</button>
+      <p class="hint small">Open source, MIT licensed. Gemma is provided under the <a href="https://ai.google.dev/gemma/terms" target="_blank" rel="noopener">Gemma Terms of Use</a>. Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0).</p>
+    </section>
+
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
