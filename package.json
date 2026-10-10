@@ -1,0 +1,15 @@
+{
+  "name": "touchgrass",
+  "version": "1.0.0",
+  "description": "One small outdoor mission written on-device by Gemma (WebLLM), then put your phone away.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^26.0.0"
+  }
+}
